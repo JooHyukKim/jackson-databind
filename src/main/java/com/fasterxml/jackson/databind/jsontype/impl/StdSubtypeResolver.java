@@ -205,7 +205,7 @@ public class StdSubtypeResolver
             AnnotatedClass baseType)
     {
         final Class<?> rawBase = baseType.getRawType();
-        Set<Class<?>> typesHandled = new HashSet<Class<?>>();
+        Set<Class<?>> typesHandled = new LinkedHashSet<>();
         Map<String,NamedType> byName = new LinkedHashMap<String,NamedType>();
 
         NamedType rootType = new NamedType(rawBase, null);
