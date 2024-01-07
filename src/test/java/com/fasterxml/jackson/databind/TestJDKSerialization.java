@@ -87,6 +87,11 @@ public class TestJDKSerialization extends BaseMapTest
     public class FooName { }
     class FooNameImpl extends FooName { }
 
+    @JsonTypeInfo(use = JsonTypeInfo.Id.SIMPLE_NAME)
+    @JsonSubTypes({@JsonSubTypes.Type(value = FooSimpleNameImpl.class)})
+    public class FooSimpleName { }
+    class FooSimpleNameImpl extends FooSimpleName { }
+
     /*
     /**********************************************************
     /* Tests for individual objects
@@ -230,7 +235,8 @@ public class TestJDKSerialization extends BaseMapTest
             FooNone.class,
             FooCustom.class,
             FooMinimalClass.class,
-            FooName.class
+            FooName.class,
+            FooSimpleName.class
         };
 
         for (Class<?> clazz : classes) {
