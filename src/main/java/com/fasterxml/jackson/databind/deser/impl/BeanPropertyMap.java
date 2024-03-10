@@ -78,7 +78,7 @@ public class BeanPropertyMap
      *
      * @since 2.9
      */
-    private Map<String,String> _aliasMapping;
+    private final Map<String,String> _aliasMapping;
 
     /**
      * We require {@link Locale} since case changes are locale-sensitive in certain
