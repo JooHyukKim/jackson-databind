@@ -1,4 +1,4 @@
-package com.fasterxml.jackson.failing;
+package com.fasterxml.jackson.databind.deser;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.testutil.DatabindTestUtil;
 

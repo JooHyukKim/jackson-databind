@@ -59,7 +59,7 @@ public class BeanPropertyMap
      * Array of properties in the exact order they were handed in. This is
      * used by as-array serialization, deserialization.
      */
-    private final SettableBeanProperty[] _propsInOrder;
+    private SettableBeanProperty[] _propsInOrder;
 
     /**
      * Configuration of alias mappings, indexed by unmodified property name
@@ -78,7 +78,7 @@ public class BeanPropertyMap
      *
      * @since 2.9
      */
-    private final Map<String,String> _aliasMapping;
+    private Map<String,String> _aliasMapping;
 
     /**
      * We require {@link Locale} since case changes are locale-sensitive in certain
@@ -414,8 +414,8 @@ public class BeanPropertyMap
                 }
             }
         }
-        // should we try to re-index? Apparently no need
-        return new BeanPropertyMap(_caseInsensitive, newProps, _aliasDefs, _locale);
+        _propsInOrder = newProps.toArray(new SettableBeanProperty[0]);
+        return this;
     }
 
     /**
