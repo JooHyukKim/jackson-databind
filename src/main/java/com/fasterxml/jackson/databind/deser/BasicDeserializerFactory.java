@@ -260,10 +260,16 @@ public abstract class BasicDeserializerFactory
         if (potentialCreators.hasPropertiesBased()) {
             PotentialCreator primaryPropsBased = potentialCreators.propertiesBased;
 
-            // Start by assigning the primary (and only) properties-based creator
-            _addSelectedPropertiesBasedCreator(ctxt, beanDesc, creators,
-                    CreatorCandidate.construct(config.getAnnotationIntrospector(),
-                            primaryPropsBased.creator(), primaryPropsBased.propertyDefs()));
+            // 12-Nov-2024, tatu: [databind#4777] We may have collected a 0-args Factory
+            //   method; and if so, may need to "pull it out" as default creator
+            if (primaryPropsBased.paramCount() == 0) {
+                creators.setDefaultCreator(primaryPropsBased.creator());
+            } else {
+                // Start by assigning the primary (and only) properties-based creator
+                _addSelectedPropertiesBasedCreator(ctxt, beanDesc, creators,
+                        CreatorCandidate.construct(config.getAnnotationIntrospector(),
+                                primaryPropsBased.creator(), primaryPropsBased.propertyDefs()));
+            }
         }
 
         // Continue with explicitly annotated delegating Creators
@@ -283,9 +289,10 @@ public abstract class BasicDeserializerFactory
                 // First things first: the "default constructor" (zero-arg
                 // constructor; whether implicit or explicit) is NOT included
                 // in list of constructors, so needs to be handled separately.
-                AnnotatedConstructor defaultCtor = beanDesc.findDefaultConstructor();
-                if (defaultCtor != null) {
-                    if (!creators.hasDefaultCreator() || _hasCreatorAnnotation(config, defaultCtor)) {
+                // However, we may have added one for 0-args Factory method earlier, so:
+                if (!creators.hasDefaultCreator()) {
+                    AnnotatedConstructor defaultCtor = beanDesc.findDefaultConstructor();
+                    if (defaultCtor != null) {
                         creators.setDefaultCreator(defaultCtor);
                     }
                 }
@@ -824,13 +831,7 @@ i, candidate);
         if (deser == null) {
             if (type.isInterface() || type.isAbstract()) {
                 CollectionType implType = _mapAbstractCollectionType(type, config);
-                if (implType == null) {
-                    // [databind#292]: Actually, may be fine, but only if polymorphich deser enabled
-                    if (type.getTypeHandler() == null) {
-                        throw new IllegalArgumentException("Cannot find a deserializer for non-concrete Collection type "+type);
-                    }
-                    deser = AbstractDeserializer.constructForNonPOJO(beanDesc);
-                } else {
+                if (implType != null) {
                     type = implType;
                     // But if so, also need to re-check creators...
                     beanDesc = config.introspectForCreation(type);
@@ -972,9 +973,9 @@ i, candidate);
              */
             if (deser == null) {
                 if (type.isInterface() || type.isAbstract()) {
-                    MapType fallback = _mapAbstractMapType(type, config);
-                    if (fallback != null) {
-                        type = (MapType) fallback;
+                    MapType implType = _mapAbstractMapType(type, config);
+                    if (implType != null) {
+                        type = (MapType) implType;
                         mapClass = type.getRawClass();
                         // But if so, also need to re-check creators...
                         beanDesc = config.introspectForCreation(type);
