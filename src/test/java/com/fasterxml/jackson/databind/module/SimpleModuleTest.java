@@ -488,7 +488,8 @@ public class SimpleModuleTest extends DatabindTestUtil
     public void testAutoDiscovery() throws Exception
     {
         List<?> mods = ObjectMapper.findModules();
-        assertEquals(0, mods.size());
+        // Just for sake of integrated testing with java8 module, 1 module is expected
+        assertEquals(1, mods.size());
     }
 
     @Test
