@@ -410,15 +410,12 @@ public abstract class ReferenceTypeSerializer<T>
         //    (which is what non-polymorphic serialization does too), we will need
         //    to simply delegate call, I think, and NOT try to use it here.
         // Otherwise apply in order [ type-prefix -> value -> type-suffix ] then std serialize:
-        // prefix
         WritableTypeId typeId = typeSer.writeTypePrefix(g, typeSer.typeId(ref, JsonToken.VALUE_STRING));
-        // content
         JsonSerializer<Object> ser = _valueSerializer;
         if (ser == null) {
             ser = _findCachedSerializer(provider, value.getClass());
         }
         ser.serializeWithType(value, g, provider, typeSer);
-        // suffix
         typeSer.writeTypeSuffix(g, typeId);
     }
 
