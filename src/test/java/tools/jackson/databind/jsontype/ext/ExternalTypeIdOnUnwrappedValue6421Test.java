@@ -8,7 +8,7 @@ import tools.jackson.databind.*;
 import tools.jackson.databind.exc.InvalidDefinitionException;
 import tools.jackson.databind.testutil.DatabindTestUtil;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 // [databind#6421]: `EXTERNAL_PROPERTY` type ids cannot be used for an
 // `@JsonUnwrapped` value and must fail with a clear definition error.
@@ -19,6 +19,7 @@ class ExternalTypeIdOnUnwrappedValue6421Test extends DatabindTestUtil
     @JsonSubTypes({ @JsonSubTypes.Type(value = A.class, name = "a") })
     static abstract class Base { }
 
+    @JsonTypeName("a")
     static class A extends Base {
         public int x;
     }
@@ -28,6 +29,15 @@ class ExternalTypeIdOnUnwrappedValue6421Test extends DatabindTestUtil
 
         @JsonUnwrapped
         public Base value;
+    }
+
+    static class OuterWithConcretePropertyTypeId {
+        public String name;
+
+        @JsonUnwrapped
+        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
+                include = JsonTypeInfo.As.PROPERTY, property = "kind")
+        public A value;
     }
 
     static abstract class PropertyBase { }
@@ -71,6 +81,16 @@ class ExternalTypeIdOnUnwrappedValue6421Test extends DatabindTestUtil
     @Test
     void externalTypeIdDeclaredOnUnwrappedProperty() {
         _verifyInvalidDefinition(newJsonMapper(), PropertyOuter.class);
+    }
+
+    @Test
+    void propertyTypeIdOverridesExternalTypeIdOnConcreteValueType() {
+        OuterWithConcretePropertyTypeId result = newJsonMapper()
+                .readValue(JSON, OuterWithConcretePropertyTypeId.class);
+
+        assertEquals("n", result.name);
+        assertNotNull(result.value);
+        assertEquals(3, result.value.x);
     }
 
     private void _verifyInvalidDefinition(ObjectMapper mapper, Class<?> targetType) {
