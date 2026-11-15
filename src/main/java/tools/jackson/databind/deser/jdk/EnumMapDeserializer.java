@@ -374,7 +374,7 @@ public class EnumMapDeserializer
         case JsonTokenId.ID_START_OBJECT:
         case JsonTokenId.ID_END_OBJECT:
         case JsonTokenId.ID_PROPERTY_NAME:
-            return deserialize(p, ctxt, constructMap(ctxt));
+            return _deserializeInto(p, ctxt, constructMap(ctxt), false);
         case JsonTokenId.ID_STRING:
             // (empty) String may be ok however; or single-String-arg ctor
             return _deserializeFromStringForContainer(p, ctxt);
@@ -389,6 +389,13 @@ public class EnumMapDeserializer
     @Override
     public EnumMap<?,?> deserialize(JsonParser p, DeserializationContext ctxt,
             EnumMap result)
+        throws JacksonException
+    {
+        return _deserializeInto(p, ctxt, result, _mergeValues);
+    }
+
+    private EnumMap<?,?> _deserializeInto(JsonParser p, DeserializationContext ctxt,
+            EnumMap result, boolean mergeValues)
         throws JacksonException
     {
         // [databind#631]: Assign current value, to be accessible by custom deserializers
@@ -453,7 +460,7 @@ public class EnumMapDeserializer
                 } else {
                     // [databind#6445]: Only attempt to merge content values if
                     // content type's ConfigOverride allows it (same as `MapDeserializer`)
-                    Object old = _mergeValues ? result.get(key) : null;
+                    Object old = mergeValues ? result.get(key) : null;
                     if (old != null) {
                         if (_valueTypeDeserializer == null) {
                             value = _valueDeserializer.deserialize(p, ctxt, old);

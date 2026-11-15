@@ -1,11 +1,13 @@
 package tools.jackson.databind.deser.merge;
 
 import java.util.EnumMap;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonMerge;
 
+import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -73,6 +75,15 @@ public class EnumMapMerge6445Test
             // Make sure we'll report merge problems by default
             .disable(MapperFeature.IGNORE_MERGE_FOR_UNMERGEABLE)
             .build();
+
+    @Test
+    void repeatedKeyReplacesValueInNewEnumMap() {
+        EnumMap<ChannelKey, List<String>> result = MAPPER.readValue("""
+                {"INPUT_1":["first"],"INPUT_1":["second"]}
+                """, new TypeReference<EnumMap<ChannelKey, List<String>>>() { });
+
+        assertEquals(List.of("second"), result.get(ChannelKey.INPUT_1));
+    }
 
     @Test
     public void mergeIntoExistingEnumMapValue() throws Exception
