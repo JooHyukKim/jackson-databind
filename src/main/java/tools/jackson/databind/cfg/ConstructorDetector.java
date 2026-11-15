@@ -105,8 +105,11 @@ public final class ConstructorDetector
         = new ConstructorDetector(SingleArgConstructor.DELEGATING);
 
     /**
-     * Instance similar to {@link #DEFAULT} except that for single-argument case
-     * uses setting of {@link SingleArgConstructor#REQUIRE_MODE}.
+     * Requires an explicit mode on a single-argument {@code @JsonCreator},
+     * using {@link SingleArgConstructor#REQUIRE_MODE}.
+     * Implicit constructor detection is still enabled, as with {@link #DEFAULT}.
+     * To suppress implicit properties-based constructor detection, use
+     * {@code ConstructorDetector.DEFAULT.withRequireAnnotation(true)}.
      */
     public final static ConstructorDetector EXPLICIT_ONLY
         = new ConstructorDetector(SingleArgConstructor.REQUIRE_MODE);
