@@ -54,29 +54,6 @@ import tools.jackson.databind.util.TokenBuffer;
  * In both cases, after configuration (including addition of {@link JacksonModule}s) is complete,
  * instance is created by calling {@link MapperBuilder#build()} method.
  *<p>
- * During POJO deserialization, constructors and static factory methods can be
- * selected explicitly with {@link com.fasterxml.jackson.annotation.JsonCreator}
- * or discovered implicitly. Implicit discovery depends on visibility settings,
- * which can be changed with {@link MapperBuilder#changeDefaultVisibility} or
- * {@link com.fasterxml.jackson.annotation.JsonAutoDetect} on the POJO class.
- * Jackson 3 has a separate visibility setting for single-scalar-argument
- * constructors, such as constructors accepting {@code String} or {@code long}.
- * Its default is {@link com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility#NON_PRIVATE}.
- * To allow private scalar constructors when migrating from Jackson 2, configure
- * the mapper as follows:
- *<pre>{@code
- * import com.fasterxml.jackson.annotation.JsonAutoDetect;
- * import tools.jackson.databind.json.JsonMapper;
- *
- * JsonMapper mapper = JsonMapper.builder()
- *     .changeDefaultVisibility(v -> v.withScalarConstructorVisibility(JsonAutoDetect.Visibility.ANY))
- *     .build();
- *}</pre>
- * The equivalent per-class setting is
- * {@code @JsonAutoDetect(scalarConstructorVisibility = JsonAutoDetect.Visibility.ANY)}.
- * General creator visibility and scalar constructor visibility are separate
- * settings. Constructor selection rules are configured with {@link ConstructorDetector}.
- *<p>
  * Mapper (and {@link ObjectReader}s, {@link ObjectWriter}s it constructs) will
  * use instances of {@link JsonParser} and {@link JsonGenerator}
  * for implementing actual reading/writing of JSON.

@@ -15,7 +15,7 @@ import tools.jackson.databind.util.ClassUtil;
  * implicit single-scalar-argument constructors have their own visibility setting,
  * {@link tools.jackson.databind.introspect.VisibilityChecker#withScalarConstructorVisibility},
  * which defaults to {@link com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility#NON_PRIVATE}.
- * See {@link tools.jackson.databind.ObjectMapper} for a configuration example
+ * See {@link MapperBuilder#changeDefaultVisibility} for a configuration example
  * that allows private scalar constructors.
  *
  * @since 2.12

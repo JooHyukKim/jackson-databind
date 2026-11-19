@@ -948,13 +948,23 @@ public abstract class MapperBuilder<M extends ObjectMapper,
      * Checker to modify is used for all POJO types for which there is no specific
      * per-type checker.
      *<p>
-     * Jackson 3 configures implicit single-scalar-argument constructors separately
-     * from general Creators. Their default visibility is
+     * Jackson 3 configures implicit single-scalar-argument constructors, such as
+     * constructors accepting {@code String} or {@code long}, separately from
+     * general Creators. Their default visibility is
      * {@link com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility#NON_PRIVATE}.
-     * To allow private scalar constructors, return
-     * {@code v.withScalarConstructorVisibility(JsonAutoDetect.Visibility.ANY)}
-     * from the callback. See {@link ObjectMapper} for a complete builder example
-     * and the equivalent per-class {@code @JsonAutoDetect} setting.
+     * To allow private scalar constructors when migrating from Jackson 2:
+     *<pre>{@code
+     * import com.fasterxml.jackson.annotation.JsonAutoDetect;
+     * import tools.jackson.databind.json.JsonMapper;
+     *
+     * JsonMapper mapper = JsonMapper.builder()
+     *     .changeDefaultVisibility(v -> v.withScalarConstructorVisibility(JsonAutoDetect.Visibility.ANY))
+     *     .build();
+     *}</pre>
+     * The equivalent per-class setting is
+     * {@code @JsonAutoDetect(scalarConstructorVisibility = JsonAutoDetect.Visibility.ANY)}.
+     * General creator visibility and scalar constructor visibility are separate
+     * settings. Constructor selection rules are configured with {@link ConstructorDetector}.
      *
      * @param handler Function that is given current default visibility checker and that
      *    needs to return either checker as is, or a new instance created using one or more of

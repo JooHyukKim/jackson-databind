@@ -37,11 +37,12 @@ public class TestAutoDetect extends DatabindTestUtil
         private PrivateBeanNonAnnotated(String a) { this.a = a; }
     }
 
-    static class PrivateLongBean {
+    // [databind#6144] Private scalar constructor alongside a default constructor
+    static class PrivateLong6144Bean {
         long value;
 
-        public PrivateLongBean() { }
-        private PrivateLongBean(long value) { this.value = value; }
+        public PrivateLong6144Bean() { }
+        private PrivateLong6144Bean(long value) { this.value = value; }
     }
 
     // test for [databind#1347], config overrides for visibility
@@ -149,18 +150,21 @@ public class TestAutoDetect extends DatabindTestUtil
         ObjectMapper m = jsonMapperBuilder()
                 .changeDefaultVisibility(vc -> vc.withScalarConstructorVisibility(JsonAutoDetect.Visibility.ANY))
                 .build();
+        // [databind#6144] Exercise the override with an unannotated constructor
         PrivateBeanNonAnnotated implicit = m.readValue(q("xyz"), PrivateBeanNonAnnotated.class);
         assertEquals("xyz", implicit.a);
     }
 
+    // [databind#6144] 20-Nov-2026: Allow private scalar constructors via the visibility override
     @Test
-    void scalarVisibilityAllowsPrivateLongConstructor() {
-        assertThrows(JacksonException.class, () -> MAPPER.readValue("2", PrivateLongBean.class));
+    public void testScalarVisibilityAllowsPrivateLongConstructor6144()
+    {
+        assertThrows(JacksonException.class, () -> MAPPER.readValue("2", PrivateLong6144Bean.class));
 
         ObjectMapper mapper = jsonMapperBuilder()
                 .changeDefaultVisibility(vc -> vc.withScalarConstructorVisibility(Visibility.ANY))
                 .build();
-        assertEquals(2L, mapper.readValue("2", PrivateLongBean.class).value);
+        assertEquals(2L, mapper.readValue("2", PrivateLong6144Bean.class).value);
     }
 
     // [databind#1347]
