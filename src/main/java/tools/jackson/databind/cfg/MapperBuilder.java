@@ -947,10 +947,20 @@ public abstract class MapperBuilder<M extends ObjectMapper,
      * (method, field, constructor) can be auto-detected or not.
      * Checker to modify is used for all POJO types for which there is no specific
      * per-type checker.
+     *<p>
+     * Jackson 3 configures implicit single-scalar-argument constructors separately
+     * from general Creators. Their default visibility is
+     * {@link com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility#NON_PRIVATE}.
+     * To allow private scalar constructors, return
+     * {@code v.withScalarConstructorVisibility(JsonAutoDetect.Visibility.ANY)}
+     * from the callback. See {@link ObjectMapper} for a complete builder example
+     * and the equivalent per-class {@code @JsonAutoDetect} setting.
      *
      * @param handler Function that is given current default visibility checker and that
      *    needs to return either checker as is, or a new instance created using one or more of
      *    {@code withVisibility} (and similar) calls.
+     *
+     * @see VisibilityChecker#withScalarConstructorVisibility
      */
     public B changeDefaultVisibility(UnaryOperator<VisibilityChecker> handler) {
         VisibilityChecker oldV = _configOverrides.getDefaultVisibility();

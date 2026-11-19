@@ -9,6 +9,14 @@ import tools.jackson.databind.util.ClassUtil;
  * constructor(s) to use as "Creators" for POJOs.
  * Defines the API for handlers, a pre-defined set of standard instances
  * and methods for constructing alternative configurations.
+ *<p>
+ * Constructor visibility is configured through {@link MapperBuilder#changeDefaultVisibility}
+ * or {@link com.fasterxml.jackson.annotation.JsonAutoDetect}. In Jackson 3,
+ * implicit single-scalar-argument constructors have their own visibility setting,
+ * {@link tools.jackson.databind.introspect.VisibilityChecker#withScalarConstructorVisibility},
+ * which defaults to {@link com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility#NON_PRIVATE}.
+ * See {@link tools.jackson.databind.ObjectMapper} for a configuration example
+ * that allows private scalar constructors.
  *
  * @since 2.12
  */

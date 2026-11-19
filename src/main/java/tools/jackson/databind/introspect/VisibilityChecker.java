@@ -273,14 +273,11 @@ public class VisibilityChecker
     /**
      * Sets the minimum visibility for implicit single-argument scalar
      * constructors, such as constructors that accept a {@code long}.
-     * The default is {@link Visibility#NON_PRIVATE}. To allow implicit private
-     * scalar constructors when migrating from Jackson 2.x, pass
-     * {@link Visibility#ANY} when configuring the mapper:
-     * <pre>{@code
-     * JsonMapper.builder()
-     *     .changeDefaultVisibility(v -> v.withScalarConstructorVisibility(Visibility.ANY))
-     *     .build();
-     * }</pre>
+     * The default is {@link Visibility#NON_PRIVATE}. Use {@link Visibility#ANY}
+     * to allow private scalar constructors.
+     *
+     * @see tools.jackson.databind.ObjectMapper
+     * @see tools.jackson.databind.cfg.MapperBuilder#changeDefaultVisibility
      *
      * @since 3.0
      */
