@@ -262,6 +262,11 @@ public class VisibilityChecker
      * Builder method that will return a checker instance that has
      * specified minimum visibility level for creator methods
      * (constructors, factory methods)
+     *<p>
+     * Implicit single-scalar-argument constructors, such as constructors accepting
+     * {@code String} or {@code long}, use {@link #withScalarConstructorVisibility}.
+     * See {@link tools.jackson.databind.cfg.MapperBuilder#changeDefaultVisibility}
+     * for an example that allows private scalar constructors in Jackson 3.
      */
     public VisibilityChecker withCreatorVisibility(Visibility v) {
         if (v == Visibility.DEFAULT) v = DEFAULT._creatorMinLevel;
@@ -271,6 +276,14 @@ public class VisibilityChecker
     }
 
     /**
+     * Sets the minimum visibility for implicit single-argument scalar
+     * constructors, such as constructors that accept a {@code long}.
+     * The default is {@link Visibility#NON_PRIVATE}. Use {@link Visibility#ANY}
+     * to allow private scalar constructors.
+     *
+     * @see #withCreatorVisibility
+     * @see tools.jackson.databind.cfg.MapperBuilder#changeDefaultVisibility
+     *
      * @since 3.0
      */
     public VisibilityChecker withScalarConstructorVisibility(Visibility v) {
